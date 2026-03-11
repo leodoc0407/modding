@@ -1,0 +1,32 @@
+name: Build Mod
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Позволяет запускать сборку вручную
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # Используем проверенную сборку Java
+          java-version: '17'      # Forge 1.20.1 требует Java 17
+
+      - name: Make Gradlew Executable
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Upload Built JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mod JAR
+          path: build/libs/*.jar
